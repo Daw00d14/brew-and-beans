@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: brew-and-beans-api
+    runtime: node
+    region: frankfurt
+    healthCheckPath: /api/health
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: PORT
+        value: "10000"
+      - key: RESEND_API_KEY
+        sync: false
+      - key: FRONTEND_URL
+        sync: false

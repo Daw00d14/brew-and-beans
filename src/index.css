@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@layer base {
+  /* WCAG 2.4.7: Visible focus indicators for all interactive elements */
+  *:focus {
+    outline: none;
+  }
+
+  *:focus-visible {
+    outline: 2px solid #A67C52;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* WCAG 2.3.1: Respect reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    .steam,
+    .steam-delayed {
+      animation: none !important;
+      opacity: 0.5;
+    }
+
+    .coffee-bean-float {
+      animation: none !important;
+    }
+  }
+}
+
+@layer utilities {
+  .font-serif {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+  .font-instrument {
+    font-family: 'Instrument Serif', serif;
+  }
+
+  .glass-nav {
+    background: rgba(28, 19, 15, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(166, 124, 82, 0.2);
+  }
+
+  .glass-card {
+    background: rgba(40, 28, 22, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(166, 124, 82, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .warm-gradient-text {
+    background: linear-gradient(135deg, #F5E6D3 0%, #C4956A 40%, #A67C52 70%, #8B5E34 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .steam {
+    animation: steamFloat 4s ease-in-out infinite;
+  }
+
+  .steam-delayed {
+    animation: steamFloat 4s ease-in-out 2s infinite;
+  }
+
+  .coffee-bean-float {
+    animation: beanFloat 3s ease-in-out infinite;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes steamFloat {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
+  50% { transform: translateY(-20px) scale(1.2); opacity: 0.6; }
+}
+
+@keyframes beanFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(10deg); }
+}
