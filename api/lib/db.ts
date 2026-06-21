@@ -14,7 +14,7 @@ function getSql() {
 
 export async function initSchema(): Promise<void> {
   const sql = getSql();
-  await sql(`
+  await sql`
     CREATE TABLE IF NOT EXISTS reservations (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
@@ -27,7 +27,7 @@ export async function initSchema(): Promise<void> {
       status TEXT NOT NULL DEFAULT 'confirmed' CHECK(status IN ('confirmed', 'cancelled', 'completed')),
       created_at TIMESTAMP NOT NULL DEFAULT NOW()
     )
-  `);
+  `;
 }
 
 export async function getReservations() {
