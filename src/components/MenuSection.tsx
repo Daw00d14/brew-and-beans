@@ -131,7 +131,7 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ onOrderSelect }) => {
                   exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
                   transition={{ duration: 0.35, delay: idx * 0.05 }}
                   className={`group flex bg-[#281C16]/80 border rounded-2xl overflow-hidden transition-all duration-300 ${
-                    item.in_stock === false
+                    !item.in_stock
                       ? 'border-red-500/20 opacity-70'
                       : 'border-[#A67C52]/15 hover:border-[#A67C52]/50 hover:shadow-[0_10px_30px_rgba(166,124,82,0.15)]'
                   }`}
@@ -141,7 +141,7 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ onOrderSelect }) => {
                       loading="lazy"
                       className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
                     />
-                    {item.in_stock === false && (
+                    {!item.in_stock && (
                       <div className="absolute inset-0 bg-[#1C130F]/60 flex items-center justify-center">
                         <span className="text-red-400 text-xs font-bold uppercase tracking-wider -rotate-12 border border-red-400/50 px-2 py-1 rounded">Not available right now</span>
                       </div>
@@ -156,17 +156,17 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ onOrderSelect }) => {
                       <p className="text-gray-300 text-xs sm:text-sm font-light leading-relaxed mt-1.5">{item.description}</p>
                     </div>
                     <button
-                      onClick={() => item.in_stock !== false && onOrderSelect(item)}
-                      disabled={item.in_stock === false}
-                      aria-label={item.in_stock === false ? `${item.name} is not available right now` : `Order ${item.name}`}
+                      onClick={() => !!item.in_stock && onOrderSelect(item)}
+                      disabled={!item.in_stock}
+                      aria-label={!item.in_stock ? `${item.name} is not available right now` : `Order ${item.name}`}
                       className={`self-end mt-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-300 border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C4956A] ${
-                        item.in_stock === false
+                        !item.in_stock
                           ? 'bg-gray-800 text-gray-500 border-gray-700 cursor-not-allowed'
                           : 'bg-[#A67C52]/10 hover:bg-[#A67C52] text-[#C4956A] hover:text-[#1C130F] border-[#A67C52]/30 hover:border-transparent'
                       }`}
                       style={{ minHeight: '44px', minWidth: '44px' }}
                     >
-                      {item.in_stock === false ? 'Not available right now' : 'Order'}
+                      {!item.in_stock ? 'Not available right now' : 'Order'}
                     </button>
                   </div>
                 </motion.div>
