@@ -1,19 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MENU_ITEMS, CoffeeItem } from '../data/coffeeData';
-import { Search, Coffee } from 'lucide-react';
+import { CoffeeItem, CATEGORIES } from '../data/coffeeData';
+import { Search, Coffee, XCircle } from 'lucide-react';
 
 interface MenuSectionProps {
   onOrderSelect: (item: CoffeeItem) => void;
 }
 
-const CATEGORIES = ['All', 'Espresso', 'Pour Over', 'Cold Brew', 'Signature', 'Pastries'] as const;
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 export const MenuSection: React.FC<MenuSectionProps> = ({ onOrderSelect }) => {
+  const [items, setItems] = useState<CoffeeItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filtered = MENU_ITEMS.filter(item => {
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const res = await fetch(`${API_URL}/menu`);
+        const data = await res.json();
+        setItems(data.items || []);
+      } catch {
+        // Fall back to empty
+        setItems([]);
+      }
+      setLoading(false);
+    };
+    fetchItems();
+  }, []);
+
+  const filtered = items.filter(item => {
     const matchCat = activeCategory === 'All' || item.category === activeCategory;
     const matchSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                         item.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -56,7 +73,7 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ onOrderSelect }) => {
           </motion.p>
         </div>
 
-        {/* Search - WCAG: aria-label instead of placeholder-only */}
+        {/* Search */}
         <div className="max-w-md mx-auto mb-10">
           <label htmlFor="menu-search" className="sr-only">Search the menu</label>
           <div className="relative">
@@ -71,6 +88,17 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ onOrderSelect }) => {
 
         {/* Category tabs */}
         <div className="flex items-center justify-start sm:justify-center gap-2 sm:gap-4 overflow-x-auto py-2 mb-12 no-scrollbar px-4 sm:px-2 scroll-px-4" role="tablist" aria-label="Filter menu by category">
+          <button key="All" onClick={() => setActiveCategory('All')}
+            role="tab"
+            aria-selected={activeCategory === 'All'}
+            className={`px-5 py-2.5 rounded-full text-sm font-serif font-bold transition-all duration-300 whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C4956A] ${
+              activeCategory === 'All'
+                ? 'bg-[#A67C52] text-[#1C130F] shadow-lg scale-105'
+                : 'bg-[#281C16] text-gray-300 border border-[#A67C52]/30 hover:border-[#C4956A]'
+            }`}
+          >
+            All
+          </button>
           {CATEGORIES.map(cat => (
             <button key={cat} onClick={() => setActiveCategory(cat)}
               role="tab"
@@ -87,43 +115,73 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ onOrderSelect }) => {
         </div>
 
         {/* Menu Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <AnimatePresence mode="popLayout">
-            {filtered.map((item, idx) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
-                transition={{ duration: 0.35, delay: idx * 0.05 }}
-                className="group flex bg-[#281C16]/80 border border-[#A67C52]/15 rounded-2xl overflow-hidden hover:border-[#A67C52]/50 transition-all duration-300 hover:shadow-[0_10px_30px_rgba(166,124,82,0.15)]"
-              >
-                <div className="w-28 sm:w-36 h-28 sm:h-36 flex-shrink-0 overflow-hidden bg-[#1C130F]">
-                  <img src={item.image} alt={item.name}
-                    loading="lazy"
-                    className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
-                  />
-                </div>
-                <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-serif text-lg font-bold text-white group-hover:text-[#C4956A] transition-colors">{item.name}</h3>
-                      <span className="font-serif text-base font-bold text-[#C4956A] whitespace-nowrap">{item.price}</span>
-                    </div>
-                    <p className="text-gray-300 text-xs sm:text-sm font-light leading-relaxed mt-1.5">{item.description}</p>
+        {loading ? (
+          <div className="text-center py-20">
+            <div className="animate-spin w-8 h-8 border-2 border-[#A67C52] border-t-transparent rounded-full mx-auto mb-4" />
+            <p className="text-gray-400 text-sm">Loading menu...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <AnimatePresence mode="popLayout">
+              {filtered.map((item, idx) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+                  transition={{ duration: 0.35, delay: idx * 0.05 }}
+                  className={`group flex bg-[#281C16]/80 border rounded-2xl overflow-hidden transition-all duration-300 ${
+                    item.in_stock === false
+                      ? 'border-red-500/20 opacity-70'
+                      : 'border-[#A67C52]/15 hover:border-[#A67C52]/50 hover:shadow-[0_10px_30px_rgba(166,124,82,0.15)]'
+                  }`}
+                >
+                  <div className="w-28 sm:w-36 h-28 sm:h-36 flex-shrink-0 overflow-hidden bg-[#1C130F] relative">
+                    <img src={item.image} alt={item.name}
+                      loading="lazy"
+                      className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
+                    />
+                    {item.in_stock === false && (
+                      <div className="absolute inset-0 bg-[#1C130F]/60 flex items-center justify-center">
+                        <span className="text-red-400 text-xs font-bold uppercase tracking-wider -rotate-12 border border-red-400/50 px-2 py-1 rounded">Unavailable</span>
+                      </div>
+                    )}
                   </div>
-                  <button onClick={() => onOrderSelect(item)}
-                    aria-label={`Order ${item.name}`}
-                    className="self-end mt-2 px-4 py-2 rounded-lg bg-[#A67C52]/10 hover:bg-[#A67C52] text-[#C4956A] hover:text-[#1C130F] text-xs font-bold uppercase tracking-wider transition-all duration-300 border border-[#A67C52]/30 hover:border-transparent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C4956A]"
-                    style={{ minHeight: '44px', minWidth: '44px' }}
-                  >
-                    Order
-                  </button>
+                  <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="font-serif text-lg font-bold text-white group-hover:text-[#C4956A] transition-colors">{item.name}</h3>
+                        <span className="font-serif text-base font-bold text-[#C4956A] whitespace-nowrap">{item.price}</span>
+                      </div>
+                      <p className="text-gray-300 text-xs sm:text-sm font-light leading-relaxed mt-1.5">{item.description}</p>
+                    </div>
+                    <button
+                      onClick={() => item.in_stock !== false && onOrderSelect(item)}
+                      disabled={item.in_stock === false}
+                      aria-label={item.in_stock === false ? `${item.name} is currently unavailable` : `Order ${item.name}`}
+                      className={`self-end mt-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-300 border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C4956A] ${
+                        item.in_stock === false
+                          ? 'bg-gray-800 text-gray-500 border-gray-700 cursor-not-allowed'
+                          : 'bg-[#A67C52]/10 hover:bg-[#A67C52] text-[#C4956A] hover:text-[#1C130F] border-[#A67C52]/30 hover:border-transparent'
+                      }`}
+                      style={{ minHeight: '44px', minWidth: '44px' }}
+                    >
+                      {item.in_stock === false ? 'Unavailable' : 'Order'}
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+            {filtered.length === 0 && (
+              <div className="col-span-full text-center py-20">
+                <div className="w-16 h-16 rounded-full bg-[#A67C52]/10 flex items-center justify-center mx-auto mb-4">
+                  <XCircle className="w-8 h-8 text-gray-500" />
                 </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
+                <p className="text-gray-400">No menu items found</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </section>
   );

@@ -1,11 +1,16 @@
+export type MenuCategory = 'Espresso' | 'Pour Over' | 'Cold Brew' | 'Signature' | 'Pastries';
+
+export const CATEGORIES: MenuCategory[] = ['Espresso', 'Pour Over', 'Cold Brew', 'Signature', 'Pastries'];
+
 export interface CoffeeItem {
   id: string;
   name: string;
   description: string;
   price: string;
-  category: 'Espresso' | 'Pour Over' | 'Cold Brew' | 'Signature' | 'Pastries';
+  category: MenuCategory;
   image: string;
   featured?: boolean;
+  in_stock?: boolean;
 }
 
 export interface Testimonial {
