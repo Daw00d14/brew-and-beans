@@ -143,7 +143,7 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ onOrderSelect }) => {
                     />
                     {item.in_stock === false && (
                       <div className="absolute inset-0 bg-[#1C130F]/60 flex items-center justify-center">
-                        <span className="text-red-400 text-xs font-bold uppercase tracking-wider -rotate-12 border border-red-400/50 px-2 py-1 rounded">Unavailable</span>
+                        <span className="text-red-400 text-xs font-bold uppercase tracking-wider -rotate-12 border border-red-400/50 px-2 py-1 rounded">Not available right now</span>
                       </div>
                     )}
                   </div>
@@ -158,7 +158,7 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ onOrderSelect }) => {
                     <button
                       onClick={() => item.in_stock !== false && onOrderSelect(item)}
                       disabled={item.in_stock === false}
-                      aria-label={item.in_stock === false ? `${item.name} is currently unavailable` : `Order ${item.name}`}
+                      aria-label={item.in_stock === false ? `${item.name} is not available right now` : `Order ${item.name}`}
                       className={`self-end mt-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-300 border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C4956A] ${
                         item.in_stock === false
                           ? 'bg-gray-800 text-gray-500 border-gray-700 cursor-not-allowed'
@@ -166,7 +166,7 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ onOrderSelect }) => {
                       }`}
                       style={{ minHeight: '44px', minWidth: '44px' }}
                     >
-                      {item.in_stock === false ? 'Unavailable' : 'Order'}
+                      {item.in_stock === false ? 'Not available right now' : 'Order'}
                     </button>
                   </div>
                 </motion.div>
