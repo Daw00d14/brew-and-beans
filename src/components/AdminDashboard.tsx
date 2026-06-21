@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Lock, LogOut, Calendar, Clock, Mail, Phone, Search, X, ArrowLeft, Coffee, RefreshCw } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
 
 interface Reservation {
@@ -83,7 +83,7 @@ useEffect(() => {
     if (!confirm('Are you sure you want to cancel this reservation?')) return;
     setCancelling(id);
     try {
-      await fetch(`${API_URL}/reservations/${id}`, { method: 'DELETE' });
+      await fetch(`${API_URL}/reservations?id=${id}`, { method: 'DELETE' });
       await fetchReservations();
     } catch {}
     setCancelling(null);
