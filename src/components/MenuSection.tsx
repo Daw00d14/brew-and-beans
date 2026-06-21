@@ -70,7 +70,7 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ onOrderSelect }) => {
         </div>
 
         {/* Category tabs */}
-        <div className="flex items-center justify-center gap-2 sm:gap-4 overflow-x-auto py-2 mb-12 no-scrollbar px-2" role="tablist" aria-label="Filter menu by category">
+        <div className="flex items-center justify-start sm:justify-center gap-2 sm:gap-4 overflow-x-auto py-2 mb-12 no-scrollbar px-4 sm:px-2 scroll-px-4" role="tablist" aria-label="Filter menu by category">
           {CATEGORIES.map(cat => (
             <button key={cat} onClick={() => setActiveCategory(cat)}
               role="tab"
