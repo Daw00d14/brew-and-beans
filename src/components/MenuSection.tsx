@@ -132,7 +132,7 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ onOrderSelect }) => {
                   transition={{ duration: 0.35, delay: idx * 0.05 }}
                   className={`group flex bg-[#281C16]/80 border rounded-2xl overflow-hidden transition-all duration-300 ${
                     !item.in_stock
-                      ? 'border-red-500/20 opacity-70'
+                      ? 'border-gray-700/50 opacity-60'
                       : 'border-[#A67C52]/15 hover:border-[#A67C52]/50 hover:shadow-[0_10px_30px_rgba(166,124,82,0.15)]'
                   }`}
                 >
@@ -141,11 +141,6 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ onOrderSelect }) => {
                       loading="lazy"
                       className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
                     />
-                    {!item.in_stock && (
-                      <div className="absolute inset-0 bg-[#1C130F]/60 flex items-center justify-center">
-                        <span className="text-red-400 text-xs font-bold uppercase tracking-wider -rotate-12 border border-red-400/50 px-2 py-1 rounded">Not available right now</span>
-                      </div>
-                    )}
                   </div>
                   <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
                     <div>
